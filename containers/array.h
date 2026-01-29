@@ -85,9 +85,11 @@ template <typename Traits>
 class CArray {
     using value_type  = typename Traits::T;
     using CompareFunc = typename Traits::CompareFunc;
-    using forward_iterator  = ArrayForwardIterator < CArray<Traits> >;
-    using backward_iterator = ArrayBackwardIterator< CArray<Traits> >;
+    using  forward_iterator  = ArrayForwardIterator < CArray<Traits> >;
     friend forward_iterator;
+    using  backward_iterator = ArrayBackwardIterator< CArray<Traits> >;
+    friend backward_iterator;
+    
   private:
     size_t m_capacity = 0, m_last = 0;
     value_type *m_data = nullptr;
@@ -110,7 +112,7 @@ class CArray {
 
     backward_iterator rbegin()
     { return backward_iterator(this, getSize()-1);  }
-    forward_iterator rend()
+    backward_iterator rend()
     { return backward_iterator(this, -1);  }
 
     template <typename ObjFunc, typename ...Args>

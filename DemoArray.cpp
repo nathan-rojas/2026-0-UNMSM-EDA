@@ -55,9 +55,9 @@ void DemoArray() {
     cout << arr1 << endl;
     cout << "Terminó" << endl;
 
-    ::Foreach(arr1, &Print);                      cout << endl;
-    ::Foreach(arr1.begin(),  arr1.end(),  &Print);  cout << endl;
-    ::Foreach(arr1.rbegin(), arr1.rend(), &Print);  cout << endl;
+    ::Foreach(arr1, &Print<T1>);                      cout << endl;
+    ::Foreach(arr1.begin(),  arr1.end(),  &Print<T1>);  cout << endl;
+    ::Foreach(arr1.rbegin(), arr1.rend(), &Print<T1>);  cout << endl;
 
     cout << "Terminó #2" << endl; 
 
