@@ -8,6 +8,10 @@ using namespace std;
 
 using T1 = int;
 
+bool Mult7(T1 &elem){
+  return elem%7 == 0;
+}
+
 void DemoArray() {
     const int N = 5;
     //  /using 
@@ -15,7 +19,7 @@ void DemoArray() {
     for (auto i = 0; i < N; ++i)
       arr1.push_back(i * 10);
     cout << "First part finished" << endl;
-    arr1[3] = 43;
+    arr1[3] = 49;
     arr1.push_back(80);
     arr1.push_back(75);
 
@@ -47,6 +51,10 @@ void DemoArray() {
     Foreach(arr1, &IncBasico<T1>);
     cout << arr1 << endl;
     cout << "Terminó" << endl;
+
+    auto iter = arr1.FirstThat( &Mult7 ); 
+    if( iter != arr1.end() )
+    {   cout << "El primer multiplo de 7 es: " << *iter << endl; }
 
     using T2 = string;
     CArray< Trait1<T2> > arr2(N);

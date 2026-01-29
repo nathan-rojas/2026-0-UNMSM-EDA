@@ -82,7 +82,11 @@ class CArray {
         // for (auto i = 0; i < getSize(); ++i)
         //     of(m_data[i], args...);
     }
-    
+    template <typename ObjFunc, typename ...Args>
+    auto FirstThat(ObjFunc of, Args... args){
+        return ::FirstThat(*this, of, args...);
+    }
+
 };
 
 template <typename Traits>
