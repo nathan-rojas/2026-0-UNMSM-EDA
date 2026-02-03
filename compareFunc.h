@@ -7,11 +7,18 @@
 // C++11 en adelante
 
 template <typename T>
-bool Mayor(const T &a, const T &b)
-{ return a > b;  }
+bool Equal(const T &a, const T &b)
+{ return a < b;  }
 
 template <typename T>
 bool Menor(const T &a, const T &b)
 { return a < b;  }
+
+template <typename T>
+bool Mayor(const T &a, const T &b)
+{ return !(a==b) & !(a < b);  }
+
+
+
 
 #endif // __COMPARE_H__

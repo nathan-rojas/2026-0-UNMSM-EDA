@@ -3,8 +3,11 @@
 
 using T  = unsigned int;
 using TT = unsigned long long;
+using Size = int;
 
 using ContainerElemType = int;
 using ContainerRange = int;
+
+using ref_type = long;
 
 #endif // __TYPES_H__

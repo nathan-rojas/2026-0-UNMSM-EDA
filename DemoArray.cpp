@@ -19,12 +19,13 @@ void DemoArray() {
     const int N = 5;
     //  /using 
     CArray< Trait1<T1> > arr1(N);
+    
     for (auto i = 0; i < N; ++i)
-      arr1.push_back(i * 10);
+      arr1.push_back(i * 10, i);
     cout << "First part finished" << endl;
     arr1[3] = 49;
-    arr1.push_back(80);
-    arr1.push_back(75);
+    arr1.push_back(80, 16);
+    arr1.push_back(75, 13);
 
     // test for [] operator with out of bounds index
     arr1[9] = 10;
@@ -57,7 +58,7 @@ void DemoArray() {
 
     ::Foreach(arr1, &Print<T1>);                      cout << endl;
     ::Foreach(arr1.begin(),  arr1.end(),  &Print<T1>);  cout << endl;
-    // ::Foreach(arr1.rbegin(), arr1.rend(), &Print<T1>);  cout << endl;
+    ::Foreach(arr1.rbegin(), arr1.rend(), &Print<T1>);  cout << endl;
 
     cout << "Terminó #2" << endl; 
 
@@ -65,20 +66,20 @@ void DemoArray() {
     if( iter != arr1.end() )
     {   cout << "El primer multiplo de 7 es: " << *iter << endl; }
 
-    using T2 = string;
-    CArray< Trait1<T2> > arr2(N);
-    arr2[2] = "UNMSM";
-    arr2[4] = "FC";
-    cout << arr2 <<endl;
-    arr2.Foreach(&Suma<T2>, "Enero");
-    cout << arr2 <<endl;
+    // using T2 = string;
+    // CArray< Trait1<T2> > arr2(N);
+    // arr2[2] = "UNMSM";
+    // arr2[4] = "FC";
+    // cout << arr2 <<endl;
+    // arr2.Foreach(&Suma<T2>, "Enero");
+    // cout << arr2 <<endl;
 
-    int x = Test(5, 3, 2);
-    cout << x << endl;
-    auto r = Test(1, 2, 3.4, 4, 5, 6, 7);
-    cout << r << endl;
+    // int x = Test(5, 3, 2);
+    // cout << x << endl;
+    // auto r = Test(1, 2, 3.4, 4, 5, 6, 7);
+    // cout << r << endl;
 
-    auto str = Test(string("Hola"), string("FC"), string("UNMSM") );
-    cout << str << endl;
+    // auto str = Test(string("Hola"), string("FC"), string("UNMSM") );
+    // cout << str << endl;
 }
 
