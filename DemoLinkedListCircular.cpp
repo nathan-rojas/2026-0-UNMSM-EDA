@@ -3,15 +3,15 @@
 
 using namespace std;
 
-// Función auxiliar para Foreach
+
 void PrintValueCircular(int &val){
     cout << val << " ";
 }
 
 void DemoLinkedListCircular(){
-    
+    cout << endl;
     cout << "  DEMO: LISTA ENLAZADA CIRCULAR (LEC)" << endl;
-    
+    cout  << endl << endl;
     
     // 1. Crear lista circular
     cout << "1. Crear lista circular con push_back:" << endl;
@@ -45,9 +45,8 @@ void DemoLinkedListCircular(){
     cout << "5. Acceso con operator[]:" << endl;
     cout << "Elemento en indice [0]: " << lc1[0] << endl;
     cout << "Elemento en indice [1]: " << lc1[1] << endl;
-    cout << "Elemento en indice [2]: " << lc1[2] << endl;
+    cout << "Elemento en indice [2]: " << lc1[2] << endl << endl;
    
-    
     // 6. Iteradores (recorre una vuelta completa)
     cout << "6. Recorrer con iteradores (una vuelta):" << endl;
     cout << "Elementos: ";
@@ -90,8 +89,7 @@ void DemoLinkedListCircular(){
     cout << "lc1.getSize() = " << lc1.getSize() << endl;
     cout << "lc2.getSize() = " << lc2.getSize() << endl << endl;
     
-   
-    
+    cout << endl;
     cout << "   FIN DEMO LINKEDLIST CIRCULAR" << endl;
-    
+    cout << endl << endl;
 }

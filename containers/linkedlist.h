@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <mutex>
-#include <stdexcept>
+#include <stdexcept>    
 #include "../general/types.h"
 #include "../util.h"
 
@@ -19,10 +19,11 @@ struct ListTrait{
 };
 
 template <typename T>
-struct AscendingTrait : public ListTrait<T, std::greater<T> > {};
+struct AscendingTrait : public ListTrait<T, greater<T> > {};
 
 template <typename T>
-struct DescendingTrait : public ListTrait<T, std::less<T> > {};
+struct DescendingTrait : public ListTrait<T, less<T> > {};
+
 
 // Forward declarations
 template <typename Traits> class NodeLinkedList;
@@ -30,7 +31,7 @@ template <typename Traits> class CLinkedList;
 template <typename Traits> class LinkedListForwardIterator;
 
 
-// NODE
+// NODO
 
 template <typename Traits>
 class NodeLinkedList{
@@ -45,24 +46,26 @@ private:
     Node *m_pNext = nullptr;
 
 public:
-    NodeLinkedList(){}
-    NodeLinkedList( value_type _value, ref_type _ref = -1)
-        : m_data(_value), m_ref(_ref){   }
-    NodeLinkedList( value_type _value, ref_type _ref, Node *pNext)
-        : m_data(_value), m_ref(_ref), m_pNext(pNext){   }
+    NodeLinkedList() {}
+    
+    NodeLinkedList(value_type _value, ref_type _ref = -1)
+        : m_data(_value), m_ref(_ref) { }
+        
+    NodeLinkedList(value_type _value, ref_type _ref, Node *pNext)
+        : m_data(_value), m_ref(_ref), m_pNext(pNext) { }
         
     value_type  GetValue   () const { return m_data; }
-    value_type &GetValueRef() { return m_data; }
+    value_type &GetValueRef()       { return m_data; }
 
     ref_type    GetRef     () const { return m_ref;   }
-    ref_type   &GetRefRef  () { return m_ref;   }
+    ref_type   &GetRefRef  ()       { return m_ref;   }
 
     Node      * GetNext     () const { return m_pNext;   }
-    Node      *&GetNextRef  () { return m_pNext;   }
+    Node      *&GetNextRef  ()       { return m_pNext;   }
 };
 
 
-// FORWARD ITERATOR
+// ITERADOR (Forward)
 
 template <typename Traits>
 class LinkedListForwardIterator {
@@ -89,6 +92,8 @@ public:
     }
 };
 
+// CLASE LISTA ENLAZADA
+
 template <typename Traits>
 class CLinkedList {
     using  value_type  = typename Traits::value_type;
@@ -99,15 +104,15 @@ class CLinkedList {
     Node *m_pLast = nullptr;
     size_t m_nElements = 0;
     
-    // Concurrencia (Checklist item)
-    mutable std::mutex m_mutex;
+    // Concurrencia
+    mutable mutex m_mutex;
 
 public:
-    CLinkedList(){}
+    CLinkedList() {}
     
-    // Constructor Copia (Checklist item)
+    // Constructor Copia
     CLinkedList(const CLinkedList &other){
-        std::lock_guard<std::mutex> lock(other.m_mutex);
+        lock_guard<mutex> lock(other.m_mutex);
         Node *pCurrent = other.m_pRoot;
         while(pCurrent){
             push_back(pCurrent->GetValue(), pCurrent->GetRef());
@@ -115,9 +120,9 @@ public:
         }
     }
     
-    // Move Constructor (Checklist item)
+    // Move Constructor
     CLinkedList(CLinkedList &&other) noexcept {
-        std::lock_guard<std::mutex> lock(other.m_mutex);
+        lock_guard<mutex> lock(other.m_mutex);
         m_pRoot = other.m_pRoot;
         m_pLast = other.m_pLast;
         m_nElements = other.m_nElements;
@@ -127,34 +132,34 @@ public:
         other.m_nElements = 0;
     }
     
-    // Destructor (Checklist item)
+    // Destructor
     virtual ~CLinkedList(){ Clear(); }
     
-    // Iterators (Checklist item)
+    // Iterators begin/end
     forward_iterator begin() { return forward_iterator(m_pRoot); }
     forward_iterator end()   { return forward_iterator(nullptr); }
     
-    // Operator [] (Checklist item)
+    // Operator []
     value_type &operator[](size_t index){
-        std::lock_guard<std::mutex> lock(m_mutex);
-        if(index >= m_nElements) throw std::out_of_range("Index out of range");
+        lock_guard<mutex> lock(m_mutex);
+        if(index >= m_nElements) throw out_of_range("Index out of range");
         Node *pCurrent = m_pRoot;
         for(size_t i = 0; i < index; ++i) pCurrent = pCurrent->GetNext();
         return pCurrent->GetValueRef();
     }
     
     const value_type &operator[](size_t index) const {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        if(index >= m_nElements) throw std::out_of_range("Index out of range");
+        lock_guard<mutex> lock(m_mutex);
+        if(index >= m_nElements) throw out_of_range("Index out of range");
         Node *pCurrent = m_pRoot;
         for(size_t i = 0; i < index; ++i) pCurrent = pCurrent->GetNext();
         return pCurrent->GetValue();
     }
 
-    // Foreach (Checklist item)
-    template<typename Func, typename... Args>
-    void Foreach(Func fn, Args... args){
-        std::lock_guard<std::mutex> lock(m_mutex);
+    // Foreach
+    template<typename Function, typename... Args>
+    void Foreach(Function fn, Args... args){
+        lock_guard<mutex> lock(m_mutex);
         Node *pCurrent = m_pRoot;
         while(pCurrent){
             fn(pCurrent->GetValueRef(), args...);
@@ -162,10 +167,10 @@ public:
         }
     }
     
-    // FirstThat (Checklist item)
+    // FirstThat
     template<typename Predicate>
     value_type *FirstThat(Predicate pred){
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard<mutex> lock(m_mutex);
         Node *pCurrent = m_pRoot;
         while(pCurrent){
             if(pred(pCurrent->GetValue())) return &(pCurrent->GetValueRef());
@@ -175,6 +180,7 @@ public:
     }
     
     void Clear(){
+        lock_guard<mutex> lock(m_mutex);
         Node *pCurrent = m_pRoot;
         while(pCurrent){
             Node *pNext = pCurrent->GetNext();
@@ -193,9 +199,9 @@ public:
 private:
     void InternalInsert(Node *&rParent, const value_type &val, ref_type ref);
 
-    // Operator << (Output) (Checklist item)
+    // Operator << (Output)
     friend ostream &operator<<(ostream &os, CLinkedList<Traits> &container){
-        std::lock_guard<std::mutex> lock(container.m_mutex);
+        lock_guard<mutex> lock(container.m_mutex);
         os << "CLinkedList: size = " << container.getSize() << endl;
         os << "[ ";
         Node *pCurrent = container.m_pRoot;
@@ -208,15 +214,14 @@ private:
         return os;
     }
 
-    // Operator >> (Input) (Checklist item - NUEVO)
+   // Operator >> (Input)
     friend istream &operator>>(istream &is, CLinkedList<Traits> &container){
-        std::lock_guard<std::mutex> lock(container.m_mutex);
-        value_type val;
+        // ERROR ANTERIOR: value_type val; (El compilador no lo encontraba)
+        typename Traits::value_type val; 
         ref_type ref;
-        // Intenta leer valor y referencia
+
         if(is >> val >> ref){
-             // Usa push_back por defecto al leer de stream
-            container.push_back(val, ref);
+             container.push_back(val, ref);
         }
         return is;
     }
@@ -226,7 +231,7 @@ private:
 
 template <typename Traits>
 void CLinkedList<Traits>::push_back(const value_type &val, ref_type ref){
-    std::lock_guard<std::mutex> lock(m_mutex);
+    lock_guard<mutex> lock(m_mutex);
     Node *pNewNode = new Node(val, ref);
     if( !m_pRoot ){
         m_pRoot = pNewNode;
@@ -240,11 +245,11 @@ void CLinkedList<Traits>::push_back(const value_type &val, ref_type ref){
 
 template <typename Traits>
 void CLinkedList<Traits>::InternalInsert(Node *&rParent, const value_type &val, ref_type ref){
-    // CORRECCIÓN: Usar Traits::Func() para soportar Ascendente/Descendente
+    
     if( !rParent || typename Traits::Func()(rParent->GetValue(), val) ){
         Node *pNew = new Node(val, ref, rParent);
         rParent = pNew;
-        // Si insertamos al final o la lista estaba vacía, actualizar m_pLast
+
         if(pNew->GetNext() == nullptr) m_pLast = pNew;
         ++m_nElements;
         return;
@@ -254,7 +259,7 @@ void CLinkedList<Traits>::InternalInsert(Node *&rParent, const value_type &val, 
 
 template <typename Traits>
 void CLinkedList<Traits>::Insert(const value_type &val, ref_type ref){
-    std::lock_guard<std::mutex> lock(m_mutex);
+    lock_guard<mutex> lock(m_mutex);
     InternalInsert(m_pRoot, val, ref);
 }
 

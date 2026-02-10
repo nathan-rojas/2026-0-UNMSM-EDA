@@ -2,8 +2,9 @@
 #define __LINKEDLIST_CIRCULAR_H__
 #include <iostream>
 #include <mutex>
+#include <functional>  // ← AGREGADO para greater<T> y less<T>
 #include "../general/types.h"
-#include "util.h"
+#include "../util.h"
 using namespace std;
 
 // Traits para listas enlazadas circulares
@@ -15,12 +16,12 @@ struct ListTraitCircular{
 
 template <typename T>
 struct AscendingTraitCircular : 
-    public ListTraitCircular<T, std::greater<T> >{
+    public ListTraitCircular<T, greater<T> >{
 };
 
 template <typename T>
 struct DescendingTraitCircular : 
-    public ListTraitCircular<T, std::less<T> >{
+    public ListTraitCircular<T, less<T> >{
 };
 
 // Forward declarations
@@ -71,7 +72,7 @@ public:
 };
 
 // ============================================
-// ITERATOR CIRCULAR (detiene en una vuelta completa)
+// ITERATOR CIRCULAR (da solo una vuelta completa)
 // ============================================
 template <typename Traits>
 class LinkedListCircularForwardIterator {
@@ -117,7 +118,7 @@ class CLinkedListCircular {
     Node *m_pRoot = nullptr;
     Node *m_pLast = nullptr;
     size_t m_nElements = 0;
-    mutable std::mutex m_mutex;
+    mutable mutex m_mutex;
 
 public:
     // Constructor por defecto
@@ -125,7 +126,7 @@ public:
     
     // Constructor Copia
     CLinkedListCircular(const CLinkedListCircular &other){
-        std::lock_guard<std::mutex> lock(other.m_mutex);
+        lock_guard<mutex> lock(other.m_mutex);
         
         if(!other.m_pRoot) return;
         
@@ -141,7 +142,7 @@ public:
     
     // Move Constructor
     CLinkedListCircular(CLinkedListCircular &&other) noexcept {
-        std::lock_guard<std::mutex> lock(other.m_mutex);
+        lock_guard<mutex> lock(other.m_mutex);
         m_pRoot = other.m_pRoot;
         m_pLast = other.m_pLast;
         m_nElements = other.m_nElements;
@@ -162,9 +163,9 @@ public:
     
     // operator[]
     value_type &operator[](size_t index){
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard<mutex> lock(m_mutex);
         if(index >= m_nElements || !m_pRoot)
-            throw std::out_of_range("Index out of range");
+            throw out_of_range("Index out of range");
         
         Node *pCurrent = m_pRoot;
         for(size_t i = 0; i < index; ++i)
@@ -174,9 +175,9 @@ public:
     }
     
     const value_type &operator[](size_t index) const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard<mutex> lock(m_mutex);
         if(index >= m_nElements || !m_pRoot)
-            throw std::out_of_range("Index out of range");
+            throw out_of_range("Index out of range");
         
         Node *pCurrent = m_pRoot;
         for(size_t i = 0; i < index; ++i)
@@ -188,7 +189,7 @@ public:
     // Foreach
     template<typename Func, typename... Args>
     void Foreach(Func fn, Args... args){
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard<mutex> lock(m_mutex);
         if(!m_pRoot) return;
         
         Node *pCurrent = m_pRoot;
@@ -204,7 +205,7 @@ public:
     // FirstThat
     template<typename Predicate>
     value_type *FirstThat(Predicate pred){
-        std::lock_guard<std::mutex> lock(m_mutex);
+        lock_guard<mutex> lock(m_mutex);
         if(!m_pRoot) return nullptr;
         
         Node *pCurrent = m_pRoot;
@@ -255,7 +256,7 @@ private:
 
     // operator<<
     friend ostream &operator<<(ostream &os, CLinkedListCircular<Traits> &container){
-        std::lock_guard<std::mutex> lock(container.m_mutex);
+        lock_guard<mutex> lock(container.m_mutex);
         os << "CLinkedListCircular: size = " << container.getSize();
         
         if(container.IsCircular())
@@ -280,9 +281,11 @@ private:
         return os;
     }
     
-    // operator>>
+    // ============================================
+    // operator>> CORREGIDO (SIN DEADLOCK)
+    // ============================================
     friend istream &operator>>(istream &is, CLinkedListCircular<Traits> &container){
-        std::lock_guard<std::mutex> lock(container.m_mutex);
+        // NO poner lock_guard aquí - push_back ya es thread-safe
         value_type val;
         ref_type ref;
         is >> val >> ref;
@@ -297,7 +300,7 @@ private:
 
 template <typename Traits>
 void CLinkedListCircular<Traits>::push_back(const value_type &val, ref_type ref){
-    std::lock_guard<std::mutex> lock(m_mutex);
+    lock_guard<mutex> lock(m_mutex);
     
     Node *pNewNode = new Node(val, ref);
     
@@ -318,24 +321,35 @@ void CLinkedListCircular<Traits>::push_back(const value_type &val, ref_type ref)
     ++m_nElements;
 }
 
+// CORREGIDO: Usar Traits y prevenir loop infinito
 template <typename Traits>
 void CLinkedListCircular<Traits>::InternalInsert(Node *&rParent, const value_type &val, ref_type ref){
-    if( !rParent || rParent->GetValue() > val ){
+    // 1. Usar Traits::Func() en vez de > directo
+    if( !rParent || typename Traits::Func()(rParent->GetValue(), val) ){
         Node *pNew = new Node(val, ref, rParent);
         rParent = pNew;
         
-        if(!m_pLast || !rParent->GetNext()){
-            m_pLast = pNew;
-            // CONECTAR CIRCULAR
-            m_pLast->GetNextRef() = m_pRoot;
+        // Si insertamos en lista vacía o al final "lógico"
+        if(!m_pLast || !pNew->GetNext() || pNew->GetNext() == m_pRoot){
+            if (pNew->GetNext() == nullptr) {
+                m_pLast = pNew;
+            }
         }
-        
+        // Reconectar circularidad
+        if(m_pLast) m_pLast->GetNextRef() = m_pRoot;
+
         ++m_nElements;
         return;
     }
     
-    if(!rParent->GetNext() || rParent->GetNext() == m_pRoot){
-        m_pLast = rParent;
+    // 2. DETECTAR EL FINAL DE LA VUELTA para no loopear infinitamente
+    if(rParent->GetNext() == m_pRoot){
+        // Si llegamos al final y no se insertó antes, va al final.
+        Node *pNew = new Node(val, ref, m_pRoot);
+        rParent->GetNextRef() = pNew;
+        m_pLast = pNew;
+        ++m_nElements;
+        return;
     }
     
     InternalInsert(rParent->GetNextRef(), val, ref);
@@ -343,7 +357,18 @@ void CLinkedListCircular<Traits>::InternalInsert(Node *&rParent, const value_typ
 
 template <typename Traits>
 void CLinkedListCircular<Traits>::Insert(const value_type &val, ref_type ref){
-    std::lock_guard<std::mutex> lock(m_mutex);
+    lock_guard<mutex> lock(m_mutex);
+    
+    // Check rápido para cabeza para eficiencia
+    if (!m_pRoot || typename Traits::Func()(m_pRoot->GetValue(), val)) {
+        Node *pNew = new Node(val, ref, m_pRoot);
+        m_pRoot = pNew;
+        if (!m_pLast) m_pLast = pNew;
+        m_pLast->GetNextRef() = m_pRoot; 
+        ++m_nElements;
+        return;
+    }
+
     InternalInsert(m_pRoot, val, ref);
     
     // Asegurar circularidad
