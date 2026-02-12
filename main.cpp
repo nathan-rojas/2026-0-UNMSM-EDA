@@ -4,13 +4,21 @@
 #include "containers/array.h"
 #include "containers/lists.h"
 
-// g++ -std=c++17 -Wall -g -pthread main.cpp -o main
+void DemoQueue(); 
+
+// g++ -std=c++17 -Wall -g -pthread main.cpp DemoStack.cpp DemoQueue.cpp -o main
 
 int main() {
-    std::cout << "Hello EDA-UNMSM!" << std::endl;
+    std::cout << "       EDA - UNMSM 2026           " << std::endl;
+
+    // --- Demos Anteriores ---
     // DemoUtil();
     // DemoPointers1();
     // DemoArray();
-    DemoLists();
-    return 0;
+    // DemoLists();
+
+   
+    DemoQueue();   
+
+
 }
