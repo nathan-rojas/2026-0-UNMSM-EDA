@@ -4,13 +4,20 @@
 #include "containers/array.h"
 #include "containers/lists.h"
 
-// g++ -std=c++17 -Wall -g -pthread main.cpp -o main
+
+void DemoStack();
 
 int main() {
     std::cout << "Hello EDA-UNMSM!" << std::endl;
+
+    // Demos anteriores (Comentados para probar solo el Stack)
     // DemoUtil();
     // DemoPointers1();
     // DemoArray();
-    DemoLists();
+    // DemoLists();
+
+   
+    DemoStack();
+
     return 0;
 }
