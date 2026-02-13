@@ -95,44 +95,8 @@ void DemoQueue() {
     cout << "  Push: 1, 2, 3, 4, 5" << endl;
     cout << "  Pop:  1, 2, 3, 4, 5  <- MISMO orden" << endl << endl;
     
-    // 11. Uso practico: Sistema de turnos
-    cout << "11. Uso practico: Sistema de turnos (Banco):" << endl;
-    CQueue<string> colaBanco;
-    
-    cout << "Clientes llegando:" << endl;
-    colaBanco.Push("Juan");
-    cout << "  - Juan llega" << endl;
-    colaBanco.Push("Maria");
-    cout << "  - Maria llega" << endl;
-    colaBanco.Push("Pedro");
-    cout << "  - Pedro llega" << endl;
-    colaBanco.Push("Ana");
-    cout << "  - Ana llega" << endl << endl;
-    
-    cout << "Atendiendo clientes (FIFO):" << endl;
-    while (!colaBanco.isEmpty()) {
-        cout << "  Atendiendo a: " << colaBanco.Pop() << endl;
-    }
-    cout << endl;
-    
-    // 12. Uso practico: Buffer de impresion
-    cout << "12. Uso practico: Cola de impresion:" << endl;
-    CQueue<string> colaImpresion;
-    
-    cout << "Documentos enviados a imprimir:" << endl;
-    colaImpresion.Push("Documento1.pdf");
-    colaImpresion.Push("Documento2.docx");
-    colaImpresion.Push("Documento3.txt");
-    
-    cout << "Imprimiendo en orden (FIFO):" << endl;
-    int numero = 1;
-    while (!colaImpresion.isEmpty()) {
-        cout << "  " << numero++ << ". Imprimiendo: " << colaImpresion.Pop() << endl;
-    }
-    cout << endl;
-    
-    // 13. Clear
-    cout << "13. Limpiar queue con Clear():" << endl;
+    // 11. Clear
+    cout << "11. Limpiar queue con Clear():" << endl;
     q1.Clear();
     cout << "Despues de Clear(): " << q1;
     cout << "Esta vacia? " << (q1.isEmpty() ? "SI" : "NO") << endl << endl;
