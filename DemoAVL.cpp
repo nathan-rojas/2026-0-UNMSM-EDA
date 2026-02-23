@@ -1,7 +1,7 @@
 #include <iostream>
 #include <utility>
 #include "containers/binarytree.h"
-#include "containers/Avl.h" // Coincide exactamente con tu archivo
+#include "containers/Avl.h" 
 
 using namespace std;
 
@@ -23,27 +23,26 @@ void DemoAVL(){
     using namespace TreeFunctions;
 
     cout << "============================================" << endl;
-    cout << "   DEMO AVL TREE (INTERACTIVO Y VISUAL)     " << endl;
+    cout << "   DEMO AVL TREE      " << endl;
     cout << "============================================" << endl;
     
-    // Instanciamos usando tu nombre de clase exacto: CAVL
     CAVL<TreeTraitDescending<int>> avlTree;
 
     // 1. Armamos el árbol inicial
-    cout << "\n[+] Construyendo arbol inicial: Insertando 10, 20, 30, 40, 50...\n";
+    cout << "\n Construyendo arbol inicial: Insertando 10, 20, 30, 40, 50...\n";
     avlTree.Insert(10);
     avlTree.Insert(20);
     avlTree.Insert(30); 
     avlTree.Insert(40);
     avlTree.Insert(50); 
 
-    // Utilizamos tu PrintTree() nativo
+    
     cout << "\n--- ESTRUCTURA DEL ARBOL INICIAL ---\n";
     avlTree.PrintTree(); 
     cout << "------------------------------------\n";
 
     // 2. Inserción interactiva
-    cout << "\n[?] Ingresa un nuevo numero para INSERTAR en el AVL: ";
+    cout << "\n Ingresa un nuevo numero para INSERTAR en el AVL: ";
     cin >> avlTree; 
     
     cout << "\n--- ESTRUCTURA DESPUES DE INSERTAR ---\n";
@@ -52,17 +51,17 @@ void DemoAVL(){
 
     // 3. Borrado interactivo
     int numToRemove;
-    cout << "[?] Ingresa el numero que deseas ELIMINAR del AVL: ";
+    cout << " Ingresa el numero que deseas ELIMINAR del AVL: ";
     cin >> numToRemove;
     
-    cout << "\n[-] Eliminando el nodo " << numToRemove << "...\n";
+    cout << "\n  Eliminando el nodo " << numToRemove << "...\n";
     avlTree.Remove(numToRemove);
     
     cout << "\n--- ESTRUCTURA DESPUES DE ELIMINAR ---\n";
     avlTree.PrintTree();
     cout << "\n" << avlTree << "\n\n";
 
-    // 4. Pruebas de recorridos y C++ avanzado
+    // 4. Pruebas de recorridos 
     cout << "--- PRUEBAS DE ITERADORES Y FUNCIONES AVANZADAS ---\n";
     cout << "Inorden:   "; avlTree.Inorden(PrintNode); cout << endl;
     cout << "Preorden:  "; avlTree.Preorden(PrintNode); cout << endl;
@@ -77,7 +76,7 @@ void DemoAVL(){
         cout << "FirstThat: Nodo con valor 30 encontrado con exito.\n";
     }
 
-    cout << "\n[+] Evaluando Copy Constructor y Move Constructor...\n";
+    cout << "\n  Evaluando Copy Constructor y Move Constructor...\n";
     CAVL<TreeTraitDescending<int>> copyAvl = avlTree;
     CAVL<TreeTraitDescending<int>> moveAvl = std::move(copyAvl);
     
@@ -90,5 +89,5 @@ void DemoAVL(){
     for (auto it = moveAvl.rbegin(); it != moveAvl.rend(); ++it) {
         cout << *it << " ";
     }
-    cout << "\n\n[!] Demo AVL finalizado exitosamente.\n";
+    cout << "\n\n Demo AVL finalizado exitosamente.\n";
 }
