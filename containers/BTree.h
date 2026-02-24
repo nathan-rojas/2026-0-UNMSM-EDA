@@ -1,4 +1,3 @@
-// btree.h - DEFINITIVO con TODO dentro de la clase
 
 #ifndef BTREE_H
 #define BTREE_H

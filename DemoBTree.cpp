@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "containers/btree.h" // Asegúrate de que esta ruta coincida con tu carpeta
+#include "containers/btree.h" 
 
 using namespace std;
 
@@ -12,7 +12,7 @@ const int BTreeSize = 3;
 
 void DemoBTree() {
     cout << "======================================================" << endl;
-    cout << "        DEMO B-TREE (PRUEBA ORIGINAL DEL PROFESOR)    " << endl;
+    cout << "        DEMO B-TREE    " << endl;
     cout << "======================================================" << endl << endl;
 
     BTree<char> bt(BTreeSize);
@@ -29,7 +29,7 @@ void DemoBTree() {
     cout << endl;
 
     // ---------------------------------------------------------
-    // 2. BÚSQUEDA (Descomentado y formateado)
+    // 2. BÚSQUEDA 
     // ---------------------------------------------------------
     cout << "--- 2. BUSQUEDA DE CLAVES ---" << endl;
     for (int i = 0; keys2[i]; i++) {
@@ -43,11 +43,11 @@ void DemoBTree() {
     cout << endl;
 
     // ---------------------------------------------------------
-    // 3. ELIMINACIÓN (Descomentado y optimizado visualmente)
+    // 3. ELIMINACIÓN 
     // ---------------------------------------------------------
     cout << "--- 3. ELIMINACION DE CLAVES ---" << endl;
     for (int i = 0; keys3[i]; i++) {
-        // Se intenta eliminar usando -1 como ObjID, tal como lo escribio el profesor
+        
         if (bt.Remove(keys3[i], -1)) {
             cout << "Clave '" << keys3[i] << "' eliminada con exito." << endl;
         } else {
